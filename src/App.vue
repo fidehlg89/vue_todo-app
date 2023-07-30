@@ -27,6 +27,13 @@
         class="flex flex-col items-center px-0 py-4 mx-auto mt-5 overflow-hidden bg-white rounded-md shadow-lg w-full-sm"
       >
         <h2 class="w-full px-4 text-2xl font-bold text-left">Todo List</h2>
+        <button
+          type="button"
+          @click="showPendingTasks = !showPendingTasks"
+          class="inline-block whitespace-nowrap cursor-pointer rounded px-[0.65em] pb-[0.25em] pt-[0.35em] text-center align-baseline font-medium text-xs uppercase bg-indigo-600 text-white"
+        >
+          {{ showPendingTasks ? 'Show All' : 'Show Pendings' }}
+        </button>
         <div v-if="tasks.length > 0" class="w-full mt-4">
           <ul>
             <li
@@ -47,34 +54,96 @@
                   v-else
                   v-model="editedText"
                   @keyup.enter="saveEditedTask(taskItem)"
-                  @blur="saveEditedTask(taskItem)"
+                  @keyup.esc="stopEditingTask()"
                   type="text"
                   class="w-40 px-1 my-1 text-lg font-medium text-gray-600 border-b-4 border-gray-800 border-solid bg-slate-200 focus:outline-none"
                   placeholder="Edit task"
                 />
+                <div class="flex">
+                  <button
+                    @click="saveEditedTask(taskItem)"
+                    v-if="editingTaskId === taskItem.id"
+                    class="w-6 h-6 text-green-700"
+                    title="Save"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      className="w-6 h-6"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M19.916 4.626a.75.75 0 01.208 1.04l-9 13.5a.75.75 0 01-1.154.114l-6-6a.75.75 0 011.06-1.06l5.353 5.353 8.493-12.739a.75.75 0 011.04-.208z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </button>
+                  <button
+                    @click="stopEditingTask()"
+                    v-if="editingTaskId === taskItem.id"
+                    class="w-6 h-6 text-gray-600"
+                    title="Cancel"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      className="w-6 h-6"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M6.72 5.66l11.62 11.62A8.25 8.25 0 006.72 5.66zm10.56 12.68L5.66 6.72a8.25 8.25 0 0011.62 11.62zM5.105 5.106c3.807-3.808 9.98-3.808 13.788 0 3.808 3.807 3.808 9.98 0 13.788-3.807 3.808-9.98 3.808-13.788 0-3.808-3.807-3.808-9.98 0-13.788z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </button>
+                </div>
               </div>
               <div class="flex items-center px-4">
-                {{ taskItem.completed ? "Done" : "In Progress" }}
+                <span
+                  @click="changeTaskStatus(taskItem)"
+                  :class="buttonClass(taskItem)"
+                  class="inline-block whitespace-nowrap cursor-pointer rounded px-[0.65em] pb-[0.25em] pt-[0.35em] text-center align-baseline font-medium text-xs uppercase"
+                  title="Click to change status"
+                >
+                  {{ taskItem.status }}
+                </span>
               </div>
               <div class="flex items-center justify-center">
                 <button
-                  @click="startEditingTask(taskItem)"
-                  v-if="!isTaskEditing(taskItem)"
+                  @click="duplicateTask(taskItem)"
                   class="w-6 h-6 text-blue-600"
                 >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-                  <path d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32l8.4-8.4z" />
-                  <path d="M5.25 5.25a3 3 0 00-3 3v10.5a3 3 0 003 3h10.5a3 3 0 003-3V13.5a.75.75 0 00-1.5 0v5.25a1.5 1.5 0 01-1.5 1.5H5.25a1.5 1.5 0 01-1.5-1.5V8.25a1.5 1.5 0 011.5-1.5h5.25a.75.75 0 000-1.5H5.25z" />
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 7.5V6.108c0-1.135.845-2.098 1.976-2.192.373-.03.748-.057 1.123-.08M15.75 18H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08M15.75 18.75v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5A3.375 3.375 0 006.375 7.5H5.25m11.9-3.664A2.251 2.251 0 0015 2.25h-1.5a2.251 2.251 0 00-2.15 1.586m5.8 0c.065.21.1.433.1.664v.75h-6V4.5c0-.231.035-.454.1-.664M6.75 7.5H4.875c-.621 0-1.125.504-1.125 1.125v12c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V16.5a9 9 0 00-9-9z" />
                 </svg>
+
                 </button>
-                <button @click="stopEditingTask()" v-if="editingTaskId !== null" class="w-6 h-6 text-gray-600">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-                    <path fillRule="evenodd" d="M6.72 5.66l11.62 11.62A8.25 8.25 0 006.72 5.66zm10.56 12.68L5.66 6.72a8.25 8.25 0 0011.62 11.62zM5.105 5.106c3.807-3.808 9.98-3.808 13.788 0 3.808 3.807 3.808 9.98 0 13.788-3.807 3.808-9.98 3.808-13.788 0-3.808-3.807-3.808-9.98 0-13.788z" clipRule="evenodd" />
+                <button
+                  @click="startEditingTask(taskItem)"
+                  v-if="!isTaskEditing(taskItem)"
+                  class="w-6 h-6 text-yellow-500"
+                  title="Edit task"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    className="w-6 h-6"
+                  >
+                    <path
+                      d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32l8.4-8.4z"
+                    />
+                    <path
+                      d="M5.25 5.25a3 3 0 00-3 3v10.5a3 3 0 003 3h10.5a3 3 0 003-3V13.5a.75.75 0 00-1.5 0v5.25a1.5 1.5 0 01-1.5 1.5H5.25a1.5 1.5 0 01-1.5-1.5V8.25a1.5 1.5 0 011.5-1.5h5.25a.75.75 0 000-1.5H5.25z"
+                    />
                   </svg>
                 </button>
                 <button
                   @click="deleteTaskWithConfirmation(taskItem.id)"
                   class="w-6 h-6 text-red-600"
+                  title="Delete task"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -109,6 +178,7 @@
 
 <script>
 import ConfirmationDialog from './components/ConfirmationDialog.vue'
+import { TaskStatusEnum } from './store'
 
 export default {
   components: { ConfirmationDialog },
@@ -118,12 +188,28 @@ export default {
       showDeleteModal: false,
       taskToDelete: null,
       editingTaskId: null, // Almacenará el ID del task en edición
-      editedText: ''
+      editedText: '',
+      originalText: '',
+      showPendingTasks: false
     }
   },
   computed: {
     tasks () {
+      if (this.showPendingTasks) {
+        return this.$store.state.tasks.filter((task) => task.status === TaskStatusEnum.todo || task.status === TaskStatusEnum.doing)
+      }
       return this.$store.state.tasks
+    },
+    buttonClass () {
+      return (task) => {
+        if (task.status === TaskStatusEnum.todo) {
+          return 'bg-yellow-300'
+        } else if (task.status === TaskStatusEnum.doing) {
+          return 'bg-orange-300'
+        } else if (task.status === TaskStatusEnum.done) {
+          return 'bg-green-300'
+        }
+      }
     }
   },
   methods: {
@@ -135,6 +221,12 @@ export default {
         })
         this.task = ''
       }
+    },
+    duplicateTask (task) {
+      const duplicatedTask = { ...task }
+
+      // Add the duplicated task to the list of tasks in the store
+      this.$store.dispatch('createTask', duplicatedTask)
     },
     deleteTaskWithConfirmation (taskId) {
       // Show the delete confirmation modal
@@ -150,6 +242,7 @@ export default {
       this.showDeleteModal = false
     },
     startEditingTask (task) {
+      this.originalText = task.text
       if (this.editingTaskId === null) {
         this.editingTaskId = task.id
         this.editedText = task.text
@@ -164,9 +257,29 @@ export default {
     },
     saveEditedTask (task) {
       if (this.editingTaskId !== null && this.editedText.trim() !== '') {
-        this.$store.dispatch('updateTaskText', { taskId: task.id, newText: this.editedText })
+        this.$store.dispatch('updateTaskText', {
+          taskId: task.id,
+          newText: this.editedText
+        })
         this.stopEditingTask()
       }
+    },
+    changeTaskStatus (task) {
+      if (task.status === TaskStatusEnum.todo) {
+        task.status = TaskStatusEnum.doing
+      } else if (task.status === TaskStatusEnum.doing) {
+        task.status = TaskStatusEnum.done
+      } else if (task.status === TaskStatusEnum.done) {
+        task.status = TaskStatusEnum.todo
+      }
+
+      this.$store.dispatch('updateTaskStatus', {
+        taskId: task.id,
+        newStatus: task.status
+      })
+    },
+    filterPendingTask () {
+      console.log('Filter')
     }
   }
 }

@@ -4,24 +4,30 @@ import { v4 as uuidv4 } from 'uuid'
 
 Vue.use(Vuex)
 
+export const TaskStatusEnum = {
+  todo: 'todo',
+  doing: 'doing',
+  done: 'done'
+}
+
 export default new Vuex.Store({
   state: {
     tasks: [
       {
         id: uuidv4(),
         text: 'Go to the Gym',
-        completed: false
+        status: TaskStatusEnum.todo
       },
       {
         id: uuidv4(),
         text: 'Make the Homework',
-        completed: true
+        status: TaskStatusEnum.doing
       }
     ]
   },
   mutations: {
     addTask: (state, task) => {
-      state.tasks.push({ ...task, id: uuidv4(), completed: false })
+      state.tasks.push({ ...task, id: uuidv4(), status: task.status ? task.status : TaskStatusEnum.todo, completed: false })
     },
     deleteTask: (state, taskId) => {
       const index = state.tasks.findIndex((item) => item.id === taskId)
@@ -34,6 +40,12 @@ export default new Vuex.Store({
       if (task) {
         task.text = newText
       }
+    },
+    updateStatus: (state, { taskId, newStatus }) => {
+      const task = state.tasks.find((item) => item.id === taskId)
+      if (task) {
+        task.status = newStatus
+      }
     }
   },
   actions: {
@@ -45,6 +57,9 @@ export default new Vuex.Store({
     },
     updateTaskText: ({ commit }, { taskId, newText }) => {
       commit('updateTaskText', { taskId, newText })
+    },
+    updateTaskStatus: ({ commit }, { taskId, newStatus }) => {
+      commit('updateStatus', { taskId, newStatus })
     }
   }
 })

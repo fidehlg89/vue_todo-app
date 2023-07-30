@@ -4,19 +4,19 @@ CRUD Features:
 
 [x] - Option to Create To Do task.
 
-[] - Option to Update To Do task.
+[x] - Option to Update To Do task.
 
 [x] - Option to Delete To Do task (confirmation modal / pop-up).
 
-[] - Option to View all To Do tasks (only pending).
+[x] - Option to View all To Do tasks (only pending).
 
 
 
 Other Features:
 
-[] - Mark task as complete.
+[x] - Mark task as complete.
 
-[] - Duplicate the task.
+[x] - Duplicate the task. - When is done is completed
 
 [] - Set due date for the task.
 
