@@ -20,7 +20,7 @@ Other Features:
 
 [x] - Set due date for the task.
 
-[] - Option to view all the completed tasks.
+[x] - Option to view all the completed tasks.
 
 [] - Task if past the due date and not marked as complete (highlight task in red).
 

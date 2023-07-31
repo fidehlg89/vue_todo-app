@@ -30,10 +30,17 @@
         <div class="flex flex-row gap-4">
           <button
             type="button"
-            @click="showPendingTasks = !showPendingTasksfil"
+            @click="toggleShowPending"
             class="inline-block whitespace-nowrap cursor-pointer rounded px-[0.65em] pb-[0.25em] pt-[0.35em] text-center align-baseline font-medium text-xs uppercase bg-indigo-600 text-white"
           >
             {{ showPendingTasks ? 'Show All' : 'Show Pendings' }}
+          </button>
+          <button
+            type="button"
+            @click="toggleShowDone"
+            class="inline-block whitespace-nowrap cursor-pointer rounded px-[0.65em] pb-[0.25em] pt-[0.35em] text-center align-baseline font-medium text-xs uppercase bg-indigo-600 text-white"
+          >
+            {{ showDoneTasks ? 'Show All' : 'Show Done' }}
           </button>
         </div>
         <div v-if="tasks.length > 0" class="w-full mt-4">
@@ -201,15 +208,25 @@ export default {
       editingTaskId: null, // Almacenará el ID del task en edición
       editedText: '',
       originalText: '',
-      showPendingTasks: false
+      showPendingTasks: false,
+      showDoneTasks: false
     }
   },
   computed: {
     tasks () {
       if (this.showPendingTasks) {
-        return this.$store.state.tasks.filter((task) => task.status === TaskStatusEnum.todo || task.status === TaskStatusEnum.doing)
+        // Show only pending tasks - todo and doing
+        return this.$store.state.tasks.filter(
+          (task) =>
+            task.status === TaskStatusEnum.todo || task.status === TaskStatusEnum.doing
+        )
+      } else if (this.showDoneTasks) {
+        // Show only done tasks
+        return this.$store.state.tasks.filter((task) => task.status === TaskStatusEnum.done)
+      } else {
+        // Show all tasks
+        return this.$store.state.tasks
       }
-      return this.$store.state.tasks
     },
     buttonClass () {
       return (task) => {
@@ -295,6 +312,14 @@ export default {
         taskId: taskId,
         date: e.target.value
       })
+    },
+    toggleShowPending () {
+      this.showDoneTasks = false
+      this.showPendingTasks = !this.showPendingTasks
+    },
+    toggleShowDone () {
+      this.showPendingTasks = false
+      this.showDoneTasks = !this.showDoneTasks
     }
   }
 }
