@@ -16,12 +16,14 @@ export default new Vuex.Store({
       {
         id: uuidv4(),
         text: 'Go to the Gym',
-        status: TaskStatusEnum.todo
+        status: TaskStatusEnum.todo,
+        dueDate: null
       },
       {
         id: uuidv4(),
         text: 'Make the Homework',
-        status: TaskStatusEnum.doing
+        status: TaskStatusEnum.doing,
+        dueDate: null
       }
     ]
   },
@@ -46,6 +48,12 @@ export default new Vuex.Store({
       if (task) {
         task.status = newStatus
       }
+    },
+    updateDate: (state, { taskId, date }) => {
+      const task = state.tasks.find((item) => item.id === taskId)
+      if (task) {
+        task.dueDate = date
+      }
     }
   },
   actions: {
@@ -60,6 +68,9 @@ export default new Vuex.Store({
     },
     updateTaskStatus: ({ commit }, { taskId, newStatus }) => {
       commit('updateStatus', { taskId, newStatus })
+    },
+    updateTaskDate: ({ commit }, { taskId, date }) => {
+      commit('updateDate', { taskId, date })
     }
   }
 })

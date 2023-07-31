@@ -27,24 +27,27 @@
         class="flex flex-col items-center px-0 py-4 mx-auto mt-5 overflow-hidden bg-white rounded-md shadow-lg w-full-sm"
       >
         <h2 class="w-full px-4 text-2xl font-bold text-left">Todo List</h2>
-        <button
-          type="button"
-          @click="showPendingTasks = !showPendingTasks"
-          class="inline-block whitespace-nowrap cursor-pointer rounded px-[0.65em] pb-[0.25em] pt-[0.35em] text-center align-baseline font-medium text-xs uppercase bg-indigo-600 text-white"
-        >
-          {{ showPendingTasks ? 'Show All' : 'Show Pendings' }}
-        </button>
+        <div class="flex flex-row gap-4">
+          <button
+            type="button"
+            @click="showPendingTasks = !showPendingTasksfil"
+            class="inline-block whitespace-nowrap cursor-pointer rounded px-[0.65em] pb-[0.25em] pt-[0.35em] text-center align-baseline font-medium text-xs uppercase bg-indigo-600 text-white"
+          >
+            {{ showPendingTasks ? 'Show All' : 'Show Pendings' }}
+          </button>
+        </div>
         <div v-if="tasks.length > 0" class="w-full mt-4">
           <ul>
             <li
-              class="container grid grid-cols-3 gap-4 px-3 py-2 m-auto border-y-2 bg-slate-200"
+              class="container grid grid-cols-4 gap-4 px-3 py-2 m-auto border-y-2 bg-slate-200"
             >
               <div class="px-4 text-gray-600">Task</div>
               <div class="px-4 text-gray-600">Status</div>
+              <div class="px-4 text-gray-600">Due Date</div>
               <div class="flex justify-center text-gray-600">Action</div>
             </li>
             <li
-              class="container grid grid-cols-3 gap-4 px-3 py-3 m-auto border-y-2"
+              class="container grid grid-cols-4 gap-4 px-3 py-3 m-auto border-y-2"
               v-for="(taskItem, index) in tasks"
               :key="index"
             >
@@ -109,6 +112,14 @@
                 >
                   {{ taskItem.status }}
                 </span>
+              </div>
+              <div class="flex items-center px-4">
+                <input
+                  :value="taskItem.dueDate"
+                  @input="(e)=>setTaskDueDate(e, taskItem.id)"
+                  type="date"
+                  class="w-32 px-2 py-1 text-sm text-gray-600 border rounded-md focus:outline-none"
+                />
               </div>
               <div class="flex items-center justify-center">
                 <button
@@ -278,8 +289,12 @@ export default {
         newStatus: task.status
       })
     },
-    filterPendingTask () {
-      console.log('Filter')
+    setTaskDueDate (e, taskId) {
+      console.log(e.target.value)
+      this.$store.dispatch('updateTaskDate', {
+        taskId: taskId,
+        date: e.target.value
+      })
     }
   }
 }

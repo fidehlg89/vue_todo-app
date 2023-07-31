@@ -18,7 +18,7 @@ Other Features:
 
 [x] - Duplicate the task. - When is done is completed
 
-[] - Set due date for the task.
+[x] - Set due date for the task.
 
 [] - Option to view all the completed tasks.
 
