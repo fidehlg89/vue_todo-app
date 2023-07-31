@@ -55,8 +55,9 @@
             </li>
             <li
               class="container grid grid-cols-4 gap-4 px-3 py-3 m-auto border-y-2"
-              v-for="(taskItem, index) in tasks"
-              :key="index"
+              v-for="(taskItem) in tasks"
+              :key="taskItem.id"
+              :class="{ 'bg-red-300': isPastDue(taskItem) && !isTaskCompleted(taskItem) }"
             >
               <div class="flex items-center px-4">
                 <span v-if="!isTaskEditing(taskItem)">{{ taskItem.text }}</span>
@@ -238,6 +239,11 @@ export default {
           return 'bg-green-300'
         }
       }
+    },
+    overdueTasks () {
+      return this.$store.state.tasks.filter(
+        (task) => this.isPastDue(task) && !this.isTaskCompleted(task)
+      )
     }
   },
   methods: {
@@ -320,6 +326,18 @@ export default {
     toggleShowDone () {
       this.showPendingTasks = false
       this.showDoneTasks = !this.showDoneTasks
+    },
+    isPastDue (task) {
+      if (!task.dueDate) {
+        return false
+      }
+      const dueDate = new Date(task.dueDate)
+      const today = new Date()
+      return dueDate < today
+    },
+
+    isTaskCompleted (task) {
+      return task.status === TaskStatusEnum.done
     }
   }
 }

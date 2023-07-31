@@ -22,9 +22,9 @@ Other Features:
 
 [x] - Option to view all the completed tasks.
 
-[] - Task if past the due date and not marked as complete (highlight task in red).
+[x] - Task if past the due date and not marked as complete (highlight task in red).
 
-[] - Demonstrate
+[x] - Demonstrate
 
 
 
