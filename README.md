@@ -14,9 +14,9 @@ CRUD Features:
 
 Other Features:
 
-[x] - Mark task as complete.
+[x] - Mark task as complete. - When is done is completed
 
-[x] - Duplicate the task. - When is done is completed
+[x] - Duplicate the task.
 
 [x] - Set due date for the task.
 
@@ -30,11 +30,11 @@ Other Features:
 
 Things to note:
 
-[] - VueJS 2 must be used.
+[x] - VueJS 2 must be used.
 
-[] - VueX must be used.
+[x] - VueX must be used.
 
-[] - TailwindCSS must be used.
+[x] - TailwindCSS must be used.
 
 [] - Do form validations.
 
