@@ -1,8 +1,5 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 import { v4 as uuidv4 } from 'uuid'
-
-Vue.use(Vuex)
 
 export const TaskStatusEnum = {
   todo: 'todo',
@@ -10,7 +7,7 @@ export const TaskStatusEnum = {
   done: 'done'
 }
 
-export default new Vuex.Store({
+export default createStore({
   state: {
     tasks: [
       {
