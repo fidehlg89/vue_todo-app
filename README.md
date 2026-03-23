@@ -1,55 +1,75 @@
-Create a To Do List application using VueJS or NuxtJS.
+# Vue.js Todo Application (SOLID Refactor)
 
-CRUD Features:
+A polished and professional Todo application built with Vue 3, focusing on clean architecture, SOLID principles, and data persistence.
 
-[x] - Option to Create To Do task.
+## 🚀 Key Features
 
-[x] - Option to Update To Do task.
+- **Full CRUD Operations**: Create, Read, Update, and Delete tasks.
+- **Data Persistence**: Tasks are automatically saved to `localStorage`.
+- **Task Management**:
+    - Mark tasks as Complete/Doing/Todo.
+    - Duplicate existing tasks.
+    - Set due dates for tasks.
+    - Automatic highlight for overdue tasks.
+- **Filtering**: View all, pending, or completed tasks.
+- **Responsive UI**: Built with Bootstrap for a premium, responsive look.
+- **Confirmation Flow**: Secure deletion with confirmation dialogs.
 
-[x] - Option to Delete To Do task (confirmation modal / pop-up).
+## 🛠️ Architecture (SOLID)
 
-[x] - Option to View all To Do tasks (only pending).
+This project has been refactored to adhere to **SOLID** principles:
 
+- **S (Single Responsibility)**: Logic is isolated into specific files. Business logic resides in `composables`, while components handle only the UI.
+- **O (Open/Closed)**: Task statuses and filters are data-driven via `src/constants/tasks.js`.
+- **L (Liskov Substitution)**: Components use standard prop interfaces.
+- **I (Interface Segregation)**: Composables provide only the necessary methods for each component.
+- **D (Dependency Inversion)**: Components depend on composable abstractions rather than a global store directly.
 
+## 💻 Tech Stack
 
-Other Features:
+- **Framework**: Vue 3 (Composition API)
+- **State Management**: Vuex
+- **Styling**: Bootstrap 5
+- **Utilities**: UUID for unique identifiers, LocalStorage for persistence.
+- **Linting**: ESLint (Standard)
 
-[x] - Mark task as complete. - When is done is completed
+## 🏗️ Project Setup
 
-[x] - Duplicate the task.
+### Prerequisites
+- Node.js (v16+)
+- Yarn or NPM
 
-[x] - Set due date for the task.
+### Installation
+```bash
+yarn install
+# or
+npm install
+```
 
-[x] - Option to view all the completed tasks.
+### Compiles and hot-reloads for development
+```bash
+yarn serve
+# or
+npm run serve
+```
 
-[x] - Task if past the due date and not marked as complete (highlight task in red).
+### Lints and fixes files
+```bash
+yarn lint
+# or
+npm run lint
+```
 
-[x] - Demonstrate
+## 📂 Project Structure
 
+```text
+src/
+├── components/     # UI Components (TodoItem, TodoList, etc.)
+├── composables/    # Business logic (useTasks, useTaskDate)
+├── constants/      # App constants and configurations
+├── store/          # Vuex store with persistence plugin
+└── App.vue         # Main application shell
+```
 
-
-Things to note:
-
-[x] - VueJS 2 must be used.
-
-[x] - VueX must be used.
-
-[x] - TailwindCSS must be used.
-
-[] - Do form validations.
-
-[] - Demonstrate mobile responsive UI/UX design.
-
-[] - Please provide a brief "read me" describing how to run your application.
-
-Bonus:
-
-[] - Add unit/component/e2e tests.
-
-The completed project should be submitted by pushing the code to GitHub and a link emailed back to us.
-
-You have the freedom to come up with your own UI/UX design.
-
-
-
-There is no deadline but once they are done, please email us to let us know.
+---
+*Developed with focus on Clean Code and Maintainability.*
