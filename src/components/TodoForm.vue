@@ -7,14 +7,14 @@
           <div class="bg-white p-3 rounded shadow-sm">
             <div class="input-group">
               <input
-                v-model="task"
-                @keyup.enter="addTask"
+                v-model="newTaskText"
+                @keyup.enter="handleAddTask"
                 type="text"
                 class="form-control form-control-lg border-0 border-bottom border-dark rounded-0 px-1"
                 placeholder="What would you like to do?"
               />
               <button
-                @click="addTask"
+                @click="handleAddTask"
                 class="btn btn-primary px-4"
                 type="button"
               >
@@ -30,27 +30,22 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useStore } from 'vuex'
+import { useTasks } from '@/composables/useTasks'
 
-const store = useStore()
-const task = ref('')
+const { createTask } = useTasks()
+const newTaskText = ref('')
 
-const addTask = () => {
-  if (task.value.trim()) {
-    store.dispatch('createTask', {
-      text: task.value,
-      status: 'todo'
+const handleAddTask = () => {
+  if (newTaskText.value.trim()) {
+    createTask({
+      text: newTaskText.value
     })
-    task.value = ''
+    newTaskText.value = ''
   }
 }
 </script>
 
 <style scoped>
-.header-gradient {
-  background: linear-gradient(to right, #a78bfa, #3b82f6);
-}
-/* Overriding standard primary for better aesthetics as per user requirements */
 .bg-primary {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
 }

@@ -18,7 +18,6 @@
           ref="editInput"
         />
         <button @click="saveEdit" class="btn btn-outline-success btn-sm" type="button">
-          <i class="bi bi-check-lg"></i>
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
             <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.42-6.446a.05.05 0 0 1 .01-.039z"/>
           </svg>
@@ -34,13 +33,12 @@
     <!-- Status Badge -->
     <div class="me-3">
       <span
-        @click="$emit('change-status', task)"
+        @click="cycleStatus(task)"
         class="badge rounded-pill cursor-pointer p-2 px-3 text-uppercase"
-        :class="statusBadgeClass"
+        :class="statusInfo.class"
         title="Click to change status"
-        style="cursor: pointer;"
       >
-        {{ task.status }}
+        {{ statusInfo.label }}
       </span>
     </div>
 
@@ -50,14 +48,14 @@
         type="date"
         class="form-control form-control-sm"
         :value="task.dueDate"
-        @input="$emit('update-date', { taskId: task.id, date: $event.target.value })"
+        @input="updateTaskDate(task.id, $event.target.value)"
       />
     </div>
 
     <!-- Actions -->
     <div class="btn-group shadow-sm">
       <button
-        @click="$emit('duplicate', task)"
+        @click="duplicateTask(task)"
         class="btn btn-light btn-sm text-primary border"
         title="Duplicate"
       >
@@ -91,6 +89,9 @@
 
 <script setup>
 import { ref, computed, nextTick } from 'vue'
+import { useTasks } from '@/composables/useTasks'
+import { useTaskDate } from '@/composables/useTaskDate'
+import { StatusConfig } from '@/constants/tasks'
 
 const props = defineProps({
   task: {
@@ -99,28 +100,16 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['update-text', 'change-status', 'update-date', 'duplicate', 'delete'])
+const emit = defineEmits(['delete'])
+
+const { updateTaskText, updateTaskDate, cycleStatus, duplicateTask } = useTasks()
+const { overdueClass } = useTaskDate(props.task)
 
 const isEditing = ref(false)
 const editedText = ref('')
 const editInput = ref(null)
 
-const statusBadgeClass = computed(() => {
-  switch (props.task.status) {
-    case 'todo': return 'bg-warning text-dark'
-    case 'doing': return 'bg-info text-dark'
-    case 'done': return 'bg-success text-white'
-    default: return 'bg-secondary'
-  }
-})
-
-const overdueClass = computed(() => {
-  if (!props.task.dueDate || props.task.status === 'done') return ''
-  const dueDate = new Date(props.task.dueDate)
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  return dueDate < today ? 'border-start border-danger border-5 bg-danger-subtle' : 'border-start border-primary border-5'
-})
+const statusInfo = computed(() => StatusConfig[props.task.status] || { label: props.task.status, class: 'bg-secondary' })
 
 const startEdit = async () => {
   editedText.value = props.task.text
@@ -131,7 +120,7 @@ const startEdit = async () => {
 
 const saveEdit = () => {
   if (editedText.value.trim() && editedText.value !== props.task.text) {
-    emit('update-text', { taskId: props.task.id, newText: editedText.value })
+    updateTaskText(props.task.id, editedText.value)
   }
   isEditing.value = false
 }

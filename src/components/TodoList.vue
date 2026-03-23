@@ -3,41 +3,23 @@
     <div class="card-body p-4">
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="card-title h4 mb-0 fw-bold text-dark">Todo List</h2>
-        
+
         <!-- Filter Controls -->
         <div class="btn-group shadow-sm" role="group">
-          <input
-            type="radio"
-            class="btn-check"
-            name="filterRadio"
-            id="filterAll"
-            autocomplete="off"
-            :checked="currentFilter === 'all'"
-            @change="$emit('update-filter', 'all')"
-          />
-          <label class="btn btn-outline-primary btn-sm px-3" for="filterAll">All</label>
-
-          <input
-            type="radio"
-            class="btn-check"
-            name="filterRadio"
-            id="filterPending"
-            autocomplete="off"
-            :checked="currentFilter === 'pending'"
-            @change="$emit('update-filter', 'pending')"
-          />
-          <label class="btn btn-outline-primary btn-sm px-3" for="filterPending">Pending</label>
-
-          <input
-            type="radio"
-            class="btn-check"
-            name="filterRadio"
-            id="filterDone"
-            autocomplete="off"
-            :checked="currentFilter === 'done'"
-            @change="$emit('update-filter', 'done')"
-          />
-          <label class="btn btn-outline-primary btn-sm px-3" for="filterDone">Done</label>
+          <template v-for="(label, key) in filters" :key="key">
+            <input
+              type="radio"
+              class="btn-check"
+              name="filterRadio"
+              :id="`filter-${key}`"
+              autocomplete="off"
+              :checked="currentFilter === key"
+              @change="$emit('update-filter', key)"
+            />
+            <label class="btn btn-outline-primary btn-sm px-3" :for="`filter-${key}`">
+              {{ label }}
+            </label>
+          </template>
         </div>
       </div>
 
@@ -47,14 +29,10 @@
           v-for="task in filteredTasks"
           :key="task.id"
           :task="task"
-          @update-text="$emit('update-text', $event)"
-          @change-status="$emit('change-status', $event)"
-          @update-date="$emit('update-date', $event)"
-          @duplicate="$emit('duplicate', $event)"
           @delete="$emit('delete', $event)"
         />
       </ul>
-      
+
       <!-- Empty State -->
       <div v-else class="text-center py-5">
         <img src="https://img.icons8.com/clouds/100/000000/todo-list.png" alt="Empty list" class="mb-3 opacity-50" />
@@ -70,37 +48,28 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, toRefs } from 'vue'
+import { useTasks } from '@/composables/useTasks'
+import { FilterEnum } from '@/constants/tasks'
 import TodoItem from './TodoItem.vue'
 
 const props = defineProps({
-  tasks: {
-    type: Array,
-    required: true
-  },
   currentFilter: {
     type: String,
-    default: 'all'
+    default: FilterEnum.all
   }
 })
 
-const emit = defineEmits([
-  'update-filter', 
-  'update-text', 
-  'change-status', 
-  'update-date', 
-  'duplicate', 
-  'delete'
-])
+const { currentFilter } = toRefs(props)
+const { tasks, filteredTasks } = useTasks(currentFilter)
 
-const filteredTasks = computed(() => {
-  if (props.currentFilter === 'pending') {
-    return props.tasks.filter(t => t.status === 'todo' || t.status === 'doing')
-  } else if (props.currentFilter === 'done') {
-    return props.tasks.filter(t => t.status === 'done')
-  }
-  return props.tasks
-})
+defineEmits(['update-filter', 'delete'])
+
+const filters = {
+  [FilterEnum.all]: 'All',
+  [FilterEnum.pending]: 'Pending',
+  [FilterEnum.done]: 'Done'
+}
 </script>
 
 <style scoped>
