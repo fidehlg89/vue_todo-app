@@ -100,7 +100,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['delete'])
+defineEmits(['delete'])
 
 const { updateTaskText, updateTaskDate, cycleStatus, duplicateTask } = useTasks()
 const { overdueClass } = useTaskDate(props.task)

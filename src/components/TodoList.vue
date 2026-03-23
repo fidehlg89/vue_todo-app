@@ -6,7 +6,7 @@
 
         <!-- Filter Controls -->
         <div class="btn-group shadow-sm" role="group">
-          <template v-for="(label, key) in filters" :key="key">
+          <div v-for="(label, key) in filters" :key="key" class="d-inline-block">
             <input
               type="radio"
               class="btn-check"
@@ -16,10 +16,10 @@
               :checked="currentFilter === key"
               @change="$emit('update-filter', key)"
             />
-            <label class="btn btn-outline-primary btn-sm px-3" :for="`filter-${key}`">
+            <label class="btn btn-outline-primary btn-sm px-3 mb-0" :for="`filter-${key}`">
               {{ label }}
             </label>
-          </template>
+          </div>
         </div>
       </div>
 
@@ -48,7 +48,7 @@
 </template>
 
 <script setup>
-import { computed, toRefs } from 'vue'
+import { toRefs } from 'vue'
 import { useTasks } from '@/composables/useTasks'
 import { FilterEnum } from '@/constants/tasks'
 import TodoItem from './TodoItem.vue'

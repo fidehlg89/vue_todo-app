@@ -2,7 +2,7 @@ import { computed } from 'vue'
 import { useStore } from 'vuex'
 import { TaskStatusEnum, StatusConfig, FilterEnum } from '@/constants/tasks'
 
-export function useTasks(currentFilter = null) {
+export function useTasks (currentFilter = null) {
   const store = useStore()
 
   const tasks = computed(() => store.state.tasks)
@@ -24,7 +24,7 @@ export function useTasks(currentFilter = null) {
   const removeTask = (taskId) => store.dispatch('removeTask', taskId)
   const updateTaskText = (taskId, newText) => store.dispatch('updateTaskText', { taskId, newText })
   const updateTaskDate = (taskId, date) => store.dispatch('updateTaskDate', { taskId, date })
-  
+
   const cycleStatus = (task) => {
     const nextStatus = StatusConfig[task.status]?.next || TaskStatusEnum.todo
     store.dispatch('updateTaskStatus', { taskId: task.id, newStatus: nextStatus })
