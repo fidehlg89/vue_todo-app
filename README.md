@@ -2,6 +2,8 @@
 
 A polished and professional Todo application built with Vue 3, focusing on clean architecture, SOLID principles, and data persistence.
 
+**Live Demo**: [https://fe-vue3-todo.netlify.app](https://fe-vue3-todo.netlify.app)
+
 ## 🚀 Key Features
 
 - **Full CRUD Operations**: Create, Read, Update, and Delete tasks.
